@@ -537,6 +537,57 @@ func TestClosures(t *testing.T) {
   runVmTests(t, tests)
 }
 
+func TestRecursiveFunctions(t *testing.T) {
+  tests := []vmTestCase{
+    {
+      input: `
+    let countDown = fn(x) {
+      if (x == 0) {
+        return 0;
+      } else {
+        countDown(x - 1);
+      }
+    };
+    countDown(1);
+    `,
+      expected: 0,
+    },
+    {
+      input: `
+    let countDown = fn(x) {
+      if (x == 0) {
+        return 0;
+      } else {
+        countDown(x - 1);
+      }
+    };
+    let wrapper = fn() {
+      countDown(1);
+    };
+    wrapper();
+    `,
+      expected: 0,
+    },
+    {
+      input: `
+    let wrapper = fn() {
+      let countDown = fn(x) {
+        if (x == 0) {
+          return 0;
+        } else {
+          countDown(x - 1);
+        }
+      };
+      countDown(1);
+    };
+    wrapper();
+    `,
+      expected: 0,
+    },
+  }
+  runVmTests(t, tests)
+}
+
 type vmTestCase struct {
   input    string
   expected interface{}
@@ -549,6 +600,7 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
     program := parse(tt.input)
 
     comp := compiler.New()
+    
     err := comp.Compile(program)
     if err != nil {
       t.Fatalf("compiler error: %s", err)
