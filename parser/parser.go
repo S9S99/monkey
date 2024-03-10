@@ -18,6 +18,7 @@ const (
   PREFIX      // -X or !X
   CALL        // myFunction(X)
   INDEX       // array[index]
+  ASSIGN      // =
 )
 
 var precedences = map[token.TokenType]int{
@@ -31,6 +32,7 @@ var precedences = map[token.TokenType]int{
 	token.ASTERISK: PRODUCT,
 	token.LPAREN:   CALL,
   token.LBRACKET: INDEX,
+  token.ASSIGN:   ASSIGN,
 }
 
 type Parser struct {
@@ -68,6 +70,7 @@ func New(l *lexer.Lexer) *Parser {
   p.registerPrefix(token.STRING, p.parseStringLiteral)
   p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
   p.registerPrefix(token.LBRACE, p.parseHashLiteral)
+  p.registerPrefix(token.WHILE, p.parseWhileExpression)
 
   p.infixParseFns = make(map[token.TokenType]infixParseFn)
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
@@ -80,6 +83,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+  p.registerInfix(token.ASSIGN, p.parseAssignExpression)
 
   p.nextToken()
   p.nextToken()
@@ -262,7 +266,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 
-	if !p.expectPeek(token.IDENT) {
+  if !p.expectPeek(token.IDENT) {
 		return nil
 	}
 
@@ -283,6 +287,20 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
   if p.peekTokenIs(token.SEMICOLON) {
     p.nextToken()
   }
+
+	return stmt
+}
+
+func (p *Parser) parseAssignExpression(name ast.Expression) ast.Expression {
+	stmt := &ast.AssignStatement{Token: p.curToken}
+
+  if n, ok := name.(*ast.Identifier); ok {
+    stmt.Name = n
+  }
+
+  p.nextToken()
+
+  stmt.Value = p.parseExpression(LOWEST)
 
 	return stmt
 }
@@ -518,4 +536,27 @@ func (p *Parser) parseCallArguments() []ast.Expression {
   }
 
   return args
+}
+
+func (p *Parser) parseWhileExpression() ast.Expression {
+  expression := &ast.WhileExpression{Token: p.curToken}
+
+  if !p.expectPeek(token.LPAREN) {
+    return nil
+  }
+
+  p.nextToken()
+  expression.Condition = p.parseExpression(LOWEST)
+
+  if !p.expectPeek(token.RPAREN) {
+    return nil
+  }
+
+  if !p.expectPeek(token.LBRACE) {
+    return nil
+  }
+
+  expression.Loopsequence = p.parseBlockStatement()
+
+  return expression
 }

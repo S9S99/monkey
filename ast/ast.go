@@ -194,6 +194,47 @@ func (ie *IfExpression) String() string {
 
   return out.String()
 }
+type AssignStatement struct {
+  Token token.Token
+  Name  *Identifier
+  Value Expression
+}
+
+func (as *AssignStatement) expressionNode() {}
+func (as *AssignStatement) TokenLiteral() string { return as.Token.Literal }
+func (as *AssignStatement) String() string {
+  var out bytes.Buffer
+
+  out.WriteString(as.Name.String())
+  out.WriteString(" = ")
+
+  if as.Value != nil {
+    out.WriteString(as.Value.String())
+  }
+
+  out.WriteString(";")
+
+  return out.String()
+}
+
+type WhileExpression struct {
+  Token       token.Token // The 'while' token
+  Condition   Expression
+  Loopsequence *BlockStatement
+}
+
+func (we *WhileExpression) expressionNode() {}
+func (we *WhileExpression) TokenLiteral() string { return we.Token.Literal }
+func (we *WhileExpression) String() string {
+  var out bytes.Buffer
+
+  out.WriteString("if")
+  out.WriteString(we.Condition.String())
+  out.WriteString(" ")
+  out.WriteString(we.Loopsequence.String())
+
+  return out.String()
+}
 
 type BlockStatement struct {
   Token      token.Token // the { token

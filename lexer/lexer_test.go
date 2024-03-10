@@ -27,6 +27,7 @@ func TestNextToken(t *testing.T) {
     "foo bar"
     [1, 2];
     {"foo": "bar"}
+    ten = 15;
     while (ten > 20) {
       ten = ten + 1;
     }
@@ -121,6 +122,10 @@ func TestNextToken(t *testing.T) {
       {token.COLON, ":"},
       {token.STRING, "bar"},
       {token.RBRACE, "}"},
+      {token.IDENT, "ten"},
+      {token.ASSIGN, "="},
+      {token.INT, "15"},
+      {token.SEMICOLON, ";"},
       {token.WHILE, "while"},
       {token.LPAREN, "("},
       {token.IDENT, "ten"},
