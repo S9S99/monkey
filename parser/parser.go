@@ -58,10 +58,10 @@ func New(l *lexer.Lexer) *Parser {
   }
 
   p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
-	p.registerPrefix(token.IDENT, p.parseIdentifier)
-	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+  p.registerPrefix(token.IDENT, p.parseIdentifier)
+  p.registerPrefix(token.INT, p.parseIntegerLiteral)
   p.registerPrefix(token.BANG, p.parsePrefixExpression)
-	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+  p.registerPrefix(token.MINUS, p.parsePrefixExpression)
   p.registerPrefix(token.TRUE, p.parseBoolean)
   p.registerPrefix(token.FALSE, p.parseBoolean)
   p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
@@ -73,16 +73,16 @@ func New(l *lexer.Lexer) *Parser {
   p.registerPrefix(token.WHILE, p.parseWhileExpression)
 
   p.infixParseFns = make(map[token.TokenType]infixParseFn)
-	p.registerInfix(token.PLUS, p.parseInfixExpression)
-	p.registerInfix(token.MINUS, p.parseInfixExpression)
-	p.registerInfix(token.SLASH, p.parseInfixExpression)
-	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
-	p.registerInfix(token.EQ, p.parseInfixExpression)
-	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
-	p.registerInfix(token.LT, p.parseInfixExpression)
-	p.registerInfix(token.GT, p.parseInfixExpression)
-	p.registerInfix(token.LPAREN, p.parseCallExpression)
-	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+  p.registerInfix(token.PLUS, p.parseInfixExpression)
+  p.registerInfix(token.MINUS, p.parseInfixExpression)
+  p.registerInfix(token.SLASH, p.parseInfixExpression)
+  p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+  p.registerInfix(token.EQ, p.parseInfixExpression)
+  p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
+  p.registerInfix(token.LT, p.parseInfixExpression)
+  p.registerInfix(token.GT, p.parseInfixExpression)
+  p.registerInfix(token.LPAREN, p.parseCallExpression)
+  p.registerInfix(token.LBRACKET, p.parseIndexExpression)
   p.registerInfix(token.ASSIGN, p.parseAssignExpression)
 
   p.nextToken()
@@ -264,17 +264,17 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
-	stmt := &ast.LetStatement{Token: p.curToken}
+  stmt := &ast.LetStatement{Token: p.curToken}
 
   if !p.expectPeek(token.IDENT) {
-		return nil
-	}
+    return nil
+  }
 
-	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+  stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	if !p.expectPeek(token.ASSIGN) {
-		return nil
-	}
+  if !p.expectPeek(token.ASSIGN) {
+    return nil
+  }
 
   p.nextToken()
 
