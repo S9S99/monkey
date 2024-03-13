@@ -54,6 +54,16 @@ func (s *SymbolTable) DefineBuiltin(index int, name string) Symbol {
   return symbol
 }
 
+func (s *SymbolTable) Update(name string) (Symbol, bool) {
+  obj, ok := s.store[name]
+  if !ok {
+    return obj, ok
+  }
+  symbol := Symbol{Name: name, Index: obj.Index, Scope: obj.Scope}
+  s.store[name] = symbol
+  return symbol, ok
+}
+
 func (s *SymbolTable) Resolve(name string) (Symbol, bool) {
   obj, ok := s.store[name]
   if !ok && s.Outer != nil {

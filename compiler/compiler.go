@@ -132,7 +132,16 @@ func (c *Compiler) Compile(node ast.Node) error {
     } else {
       c.emit(code.OpSetLocal, symbol.Index)
     }
-
+  case *ast.AssignStatement:
+    symbol, ok := c.symbolTable.Update(node.Name.Value)
+    if !ok {
+      return fmt.Errorf("undefined variable %s", node.Name.Value)
+    }
+    if symbol.Scope == GlobalScope {
+      c.emit(code.OpAssignGlobal, symbol.Index)
+    } else {
+      c.emit(code.OpAssignLocal, symbol.Index)
+    }
   case *ast.ArrayLiteral:
     for _, el := range node.Elements {
       err := c.Compile(el)
