@@ -547,6 +547,37 @@ func TestLetStatements(t *testing.T) {
   }
 }
 
+func TestAssignStatements(t *testing.T) {
+  tests := []struct {
+    input              string
+    expectedIdentifier string
+    expectedValue      interface{}
+  }{
+    {"x = 6;", "x", 6},
+  }
+
+  for _, tt := range tests {
+    l := lexer.New(tt.input)
+    p := New(l)
+    program := p.ParseProgram()
+    checkParserErrors(t, p)
+
+    if len(program.Statements) != 1 {
+      t.Fatalf("program.Statements does not contain 1 statements. got=%d",
+        len(program.Statements))
+    }
+
+    stmt := program.Statements[0].(*ast.ExpressionStatement)
+    result, ok := stmt.Expression.(*ast.AssignStatement)
+
+    if !ok {
+      t.Fatalf("exp is not ast.AssignStatement. got=%T", stmt)
+    }
+    testIdentifier(t, result.Name, "x")
+	  testIntegerLiteral(t, result.Value, int64(6))
+  }
+}
+
 func TestReturnStatements(t *testing.T) {
   tests := []struct {
     input         string
