@@ -102,6 +102,9 @@ func (vm *VM) Run() error {
       vm.currentFrame().ip += 2
 
       vm.globals[globalIndex] = vm.pop()
+    case code.OpAssignGlobal:
+    case code.OpAssignLocal:
+
     case code.OpGetGlobal:
       globalIndex := code.ReadUint16(ins[ip+1:])
       vm.currentFrame().ip += 2

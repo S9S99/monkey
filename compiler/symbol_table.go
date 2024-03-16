@@ -42,7 +42,7 @@ func (s *SymbolTable) Define(name string) Symbol {
   } else {
     symbol.Scope = LocalScope
   }
- 
+
   s.store[name] = symbol
   s.numDefinitions++
   return symbol
@@ -54,16 +54,6 @@ func (s *SymbolTable) DefineBuiltin(index int, name string) Symbol {
   return symbol
 }
 
-func (s *SymbolTable) Update(name string) (Symbol, bool) {
-  obj, ok := s.store[name]
-  if !ok {
-    return obj, ok
-  }
-  symbol := Symbol{Name: name, Index: obj.Index, Scope: obj.Scope}
-  s.store[name] = symbol
-  return symbol, ok
-}
-
 func (s *SymbolTable) Resolve(name string) (Symbol, bool) {
   obj, ok := s.store[name]
   if !ok && s.Outer != nil {
@@ -71,13 +61,13 @@ func (s *SymbolTable) Resolve(name string) (Symbol, bool) {
     if !ok {
       return obj, ok
     }
-    
+
     if obj.Scope == GlobalScope || obj.Scope == BuiltinScope {
       return obj, ok
     }
 
     free := s.defineFree(obj)
-    
+
     return free, ok
   }
 
@@ -98,4 +88,9 @@ func (s *SymbolTable) DefineFunctionName(name string) Symbol {
   symbol := Symbol{Name: name, Index: 0, Scope: FunctionScope}
   s.store[name] = symbol
   return symbol
+}
+
+func (s *SymbolTable) ResolveCurrentScope(name string) (sym Symbol, exists bool) {
+  sym, exists = s.store[name]
+  return sym, exists
 }

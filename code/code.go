@@ -42,6 +42,8 @@ const (
   OpClosure
   OpGetFree
   OpCurrentClosure
+  OpAssignGlobal
+  OpAssignLocal
 )
 
 var definitions = map[Opcode]*Definition{
@@ -75,6 +77,8 @@ var definitions = map[Opcode]*Definition{
   OpClosure:        {"OpClosure", []int{2, 1}},
   OpGetFree:        {"OpGetFree", []int{1}},
   OpCurrentClosure: {"OpCurrentClosure", []int{}},
+  OpAssignGlobal:   {"OpAssignGlobal", []int{2}},
+  OpAssignLocal:    {"OpAssignGlobal", []int{1}},
 }
 
 func Lookup(op byte) (*Definition, error) {

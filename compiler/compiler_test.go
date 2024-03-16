@@ -733,6 +733,29 @@ func TestLetStatementScopes(t *testing.T) {
   runCompilerTests(t, tests)
 }
 
+func TestAssignStatementScopes(t *testing.T) {
+  tests := []compilerTestCase{
+    {
+      input: `
+        let num = 55;
+        num = 33;
+      `,
+      expectedConstants: []interface{}{
+        33,
+      },
+      expectedInstructions: []code.Instructions{
+        code.Make(code.OpConstant, 0),
+        code.Make(code.OpSetGlobal, 0),
+        code.Make(code.OpAssignGlobal, 0),
+        code.Make(code.OpPop),
+      },
+    },
+  }
+
+  runCompilerTests(t, tests)
+}
+
+
 func TestBuiltins(t *testing.T) {
   tests := []compilerTestCase{
     {
