@@ -132,7 +132,13 @@ func (c *Compiler) Compile(node ast.Node) error {
     } else {
       c.emit(code.OpSetLocal, symbol.Index)
     }
-
+  case *ast.AssignStatement:
+    switch lse := node.LSE.(type) {
+    case *ast.Identifier:
+      if err := c.variableAssignment(lse, node.RSE); err != nil {
+        return err
+      }
+    }
   case *ast.ArrayLiteral:
     for _, el := range node.Elements {
       err := c.Compile(el)
@@ -434,3 +440,24 @@ func (c *Compiler) loadSymbol(s Symbol) {
     c.emit(code.OpCurrentClosure)
   }
 }
+
+func (c *Compiler) variableAssignment(lse *ast.Identifier, rse ast.Expression) error {
+  name := lse.Value
+  sym, exists := c.symbolTable.ResolveCurrentScope(name)
+  if !exists || sym.Scope == BuiltinScope {
+    sym = c.symbolTable.Define(name)
+  }
+
+  if err := c.Compile(rse); err != nil {
+    return err
+  }
+
+  if sym.Scope == GlobalScope {
+    c.emit(code.OpSetGlobal, sym.Index)
+  } else {
+    c.emit(code.OpSetLocal, sym.Index)
+  }
+
+  return nil
+}
+

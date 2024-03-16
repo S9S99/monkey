@@ -6,22 +6,6 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-//  input := `=+(){},;`
-//
-//  tests := []struct {
-//    expectedType    token.TokenType
-//    expectedLiteral string
-//  }{
-//    {token.ASSIGN, "="},
-//    {token.PLUS, "+"},
-//    {token.LPAREN, "("},
-//    {token.RPAREN, ")"},
-//    {token.LBRACE, "{"},
-//    {token.RBRACE, "}"},
-//    {token.COMMA, ","},
-//    {token.SEMICOLON, ";"},
-//    {token.EOF, ""},
-//  }
   input := `let five = 5;
     let ten = 10;
     
@@ -43,6 +27,10 @@ func TestNextToken(t *testing.T) {
     "foo bar"
     [1, 2];
     {"foo": "bar"}
+    ten = 15;
+    while (ten > 20) {
+      ten = ten + 1;
+    }
    `
     tests := []struct {
       expectedType    token.TokenType
@@ -133,6 +121,24 @@ func TestNextToken(t *testing.T) {
       {token.STRING, "foo"},
       {token.COLON, ":"},
       {token.STRING, "bar"},
+      {token.RBRACE, "}"},
+      {token.IDENT, "ten"},
+      {token.ASSIGN, "="},
+      {token.INT, "15"},
+      {token.SEMICOLON, ";"},
+      {token.WHILE, "while"},
+      {token.LPAREN, "("},
+      {token.IDENT, "ten"},
+      {token.GT, ">"},
+      {token.INT, "20"},
+      {token.RPAREN, ")"},
+      {token.LBRACE, "{"},
+      {token.IDENT, "ten"},
+      {token.ASSIGN, "="},
+      {token.IDENT, "ten"},
+      {token.PLUS, "+"},
+      {token.INT, "1"},
+      {token.SEMICOLON, ";"},
       {token.RBRACE, "}"},
       {token.EOF, ""},
     }

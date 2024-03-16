@@ -28,7 +28,7 @@ type Program struct {
 
 func (p *Program) String() string {
   var out bytes.Buffer
-  
+
   for _, s:= range p.Statements {
     out.WriteString(s.String())
   }
@@ -53,19 +53,19 @@ type LetStatement struct {
 func (ls *LetStatement) statementNode() {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LetStatement) String() string {
-	var out bytes.Buffer
+  var out bytes.Buffer
 
-	out.WriteString(ls.TokenLiteral() + " ")
-	out.WriteString(ls.Name.String())
-	out.WriteString(" = ")
+  out.WriteString(ls.TokenLiteral() + " ")
+  out.WriteString(ls.Name.String())
+  out.WriteString(" = ")
 
-	if ls.Value != nil {
-		out.WriteString(ls.Value.String())
-	}
+  if ls.Value != nil {
+    out.WriteString(ls.Value.String())
+  }
 
-	out.WriteString(";")
+  out.WriteString(";")
 
-	return out.String()
+  return out.String()
 }
 
 type Identifier struct {
@@ -85,17 +85,17 @@ type ReturnStatement struct {
 func (rs *ReturnStatement) statementNode() {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
 func (rs *ReturnStatement) String() string {
-	var out bytes.Buffer
+  var out bytes.Buffer
 
-	out.WriteString(rs.TokenLiteral() + " ")
+  out.WriteString(rs.TokenLiteral() + " ")
 
-	if rs.ReturnValue != nil {
-		out.WriteString(rs.ReturnValue.String())
-	}
+  if rs.ReturnValue != nil {
+    out.WriteString(rs.ReturnValue.String())
+  }
 
-	out.WriteString(";")
+  out.WriteString(";")
 
-	return out.String()
+  return out.String()
 }
 
 type ExpressionStatement struct {
@@ -106,10 +106,10 @@ type ExpressionStatement struct {
 func (es *ExpressionStatement) statementNode() {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 func (es *ExpressionStatement) String() string {
-	if es.Expression != nil {
-		return es.Expression.String()
-	}
-	return ""
+  if es.Expression != nil {
+    return es.Expression.String()
+  }
+  return ""
 }
 
 type IntegerLiteral struct {
@@ -130,35 +130,35 @@ type PrefixExpression struct {
 func (pe *PrefixExpression) expressionNode() {}
 func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
 func (pe *PrefixExpression) String() string {
-	var out bytes.Buffer
+  var out bytes.Buffer
 
-	out.WriteString("(")
-	out.WriteString(pe.Operator)
-	out.WriteString(pe.Right.String())
-	out.WriteString(")")
+  out.WriteString("(")
+  out.WriteString(pe.Operator)
+  out.WriteString(pe.Right.String())
+  out.WriteString(")")
 
-	return out.String()
+  return out.String()
 }
 
 type InfixExpression struct {
-	Token    token.Token // The operator token, e.g. +
-	Left     Expression
-	Operator string
-	Right    Expression
+  Token    token.Token // The operator token, e.g. +
+  Left     Expression
+  Operator string
+  Right    Expression
 }
 
 func (oe *InfixExpression) expressionNode() {}
 func (oe *InfixExpression) TokenLiteral() string { return oe.Token.Literal }
 func (oe *InfixExpression) String() string {
-	var out bytes.Buffer
+  var out bytes.Buffer
 
-	out.WriteString("(")
-	out.WriteString(oe.Left.String())
-	out.WriteString(" " + oe.Operator + " ")
-	out.WriteString(oe.Right.String())
-	out.WriteString(")")
+  out.WriteString("(")
+  out.WriteString(oe.Left.String())
+  out.WriteString(" " + oe.Operator + " ")
+  out.WriteString(oe.Right.String())
+  out.WriteString(")")
 
-	return out.String()
+  return out.String()
 }
 
 type Boolean struct {
@@ -191,6 +191,45 @@ func (ie *IfExpression) String() string {
     out.WriteString("else ")
     out.WriteString(ie.Alternative.String())
   }
+
+  return out.String()
+}
+type AssignStatement struct {
+  Token token.Token
+  LSE   Expression
+  RSE   Expression
+}
+
+func (as *AssignStatement) statementNode() {}
+func (as *AssignStatement) TokenLiteral() string { return as.Token.Literal }
+func (as *AssignStatement) String() string {
+  var out strings.Builder
+
+  out.WriteString(as.LSE.String())
+  out.WriteString(" = ")
+  if as.RSE != nil {
+    out.WriteString(as.RSE.String())
+  }
+  out.WriteString(";")
+
+  return out.String()
+}
+
+type WhileExpression struct {
+  Token       token.Token // The 'while' token
+  Condition   Expression
+  Loopsequence *BlockStatement
+}
+
+func (we *WhileExpression) expressionNode() {}
+func (we *WhileExpression) TokenLiteral() string { return we.Token.Literal }
+func (we *WhileExpression) String() string {
+  var out bytes.Buffer
+
+  out.WriteString("if")
+  out.WriteString(we.Condition.String())
+  out.WriteString(" ")
+  out.WriteString(we.Loopsequence.String())
 
   return out.String()
 }
